@@ -1,0 +1,27 @@
+- name: Create deployment directory
+  file:
+    path: "{{ deployment_location }}"
+    state: directory
+
+- name: Create virtual environment
+  command: python3 -m venv {{ deployment_location }}/venv
+
+- name: Install application
+  pip:
+    requirements: "{{ deployment_location }}/requirements.txt"
+    virtualenv: "{{ deployment_location }}/venv"
+
+- name: Copy application files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ deployment_location }}/{{ item }}"
+  with_items:
+    - Example-1.1.1-py3-none-any.whl
+    - app.py
+
+- name: Run Flask application
+  command: "{{ deployment_location }}/venv/bin/flask run -p {{ app_port }}"
+  environment:
+    FLASK_APP: "{{ deployment_location }}/app.py"
+  notify:
+    - Restart Flask

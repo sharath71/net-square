@@ -1,0 +1,4 @@
+- name: Restart Flask
+  service:
+    name: flask
+    state: restarted

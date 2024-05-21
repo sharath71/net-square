@@ -1,0 +1,20 @@
+- name: Ensure standard CA certificates are present
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - ca-certificates
+    - other-standard-ca-cert-packages
+- name: Copy custom CA certificates
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/share/ca-certificates/
+  with_items:
+    - ca1.crt
+    - ca2.crt
+    - ca3.crt
+
+- name: Update CA certificates
+  command: update-ca-certificates
+  notify:
+    - Restart services
